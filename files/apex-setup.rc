@@ -15,56 +15,54 @@ on early-fs
 
     mount none /system/phh/empty /sbin/adbd bind
 
-    mkdir /apex/com.android.mediaprovider 0777 root root
-    mkdir /apex/com.android.apex.cts.shim.v1_with_prebuilts 0777 root root
-    mkdir /apex/com.android.vndk.current 0777 root root
-    mkdir /apex/com.android.vndk.v28 0777 root root
-    mkdir /apex/com.android.sdkext 0777 root root
-    mkdir /apex/com.android.i18n 0777 root root
-    mkdir /apex/com.android.art.debug 0777 root root
-    mkdir /apex/com.android.media.swcodec 0777 root root
-    mkdir /apex/com.android.media 0777 root root
-    mkdir /apex/com.android.os.statsd 0777 root root
-    mkdir /apex/com.android.extservices 0777 root root
-    mkdir /apex/com.android.runtime 0777 root root
-    mkdir /apex/com.android.neuralnetworks 0777 root root
-    mkdir /apex/com.android.cellbroadcast 0777 root root
-    mkdir /apex/com.android.vndk.v27 0777 root root
-    mkdir /apex/com.android.vndk.v26 0777 root root
     mkdir /apex/com.android.adbd 0777 root root
-    mkdir /apex/com.android.tzdata 0777 root root
-    mkdir /apex/com.android.permission 0777 root root
-    mkdir /apex/com.android.tethering 0777 root root
-    mkdir /apex/com.android.resolv 0777 root root
-    mkdir /apex/com.android.ipsec 0777 root root
-    mkdir /apex/com.android.vndk.v29 0777 root root
+    mkdir /apex/com.android.apex.cts.shim.v1_with_prebuilts 0777 root root
+    mkdir /apex/com.android.art.debug 0777 root root
+    mkdir /apex/com.android.cellbroadcast 0777 root root
     mkdir /apex/com.android.conscrypt 0777 root root
-    mkdir /apex/com.android.wifi 0777 system system
+    mkdir /apex/com.android.extservices 0777 root root
+    mkdir /apex/com.android.i18n 0777 root root
+    mkdir /apex/com.android.ipsec 0777 root root
+    mkdir /apex/com.android.media 0777 root root
+    mkdir /apex/com.android.media.swcodec 0777 root root
+    mkdir /apex/com.android.mediaprovider 0777 root root
+    mkdir /apex/com.android.neuralnetworks 0777 root root
+    mkdir /apex/com.android.os.statsd 0777 root root
+    mkdir /apex/com.android.permission 0777 root root
+    mkdir /apex/com.android.resolv 0777 root root
+    mkdir /apex/com.android.runtime 0777 root root
+    mkdir /apex/com.android.sdkext 0777 root root
+    mkdir /apex/com.android.tethering 0777 root root
+    mkdir /apex/com.android.tzdata 0777 root root
+    mkdir /apex/com.android.vndk.current 0777 root root
+    mkdir /apex/com.android.vndk.v27 0777 root root
+    mkdir /apex/com.android.vndk.v28 0777 root root
+    mkdir /apex/com.android.vndk.v29 0777 root root
+    mkdir /apex/com.android.wifi 0777 root root
 
-    mount none /system_ext/apex/com.android.mediaprovider /apex/com.android.mediaprovider bind
-    mount none /system_ext/apex/com.android.apex.cts.shim.v1_with_prebuilts /apex/com.android.apex.cts.shim.v1_with_prebuilts bind
-    mount none /system_ext/apex/com.android.vndk.current /apex/com.android.vndk.current bind
-    mount none /system_ext/apex/com.android.vndk.v28 /apex/com.android.vndk.v28 bind
-    mount none /system_ext/apex/com.android.sdkext /apex/com.android.sdkext bind
-    mount none /system_ext/apex/com.android.i18n /apex/com.android.i18n bind
-    mount none /system_ext/apex/com.android.art.debug /apex/com.android.art.debug bind
-    mount none /system_ext/apex/com.android.media.swcodec /apex/com.android.media.swcodec bind
-    mount none /system_ext/apex/com.android.media /apex/com.android.media bind
-    mount none /system_ext/apex/com.android.os.statsd /apex/com.android.os.statsd bind
-    mount none /system_ext/apex/com.android.extservices /apex/com.android.extservices bind
-    mount none /system_ext/apex/com.android.runtime /apex/com.android.runtime bind
-    mount none /system_ext/apex/com.android.neuralnetworks /apex/com.android.neuralnetworks bind
-    mount none /system_ext/apex/com.android.cellbroadcast /apex/com.android.cellbroadcast bind
-    mount none /system_ext/apex/com.android.vndk.v27 /apex/com.android.vndk.v27 bind
-    mount none /system_ext/apex/com.android.vndk.v26 /apex/com.android.vndk.v26 bind
     mount none /system_ext/apex/com.android.adbd /apex/com.android.adbd bind
-    mount none /system_ext/apex/com.android.tzdata /apex/com.android.tzdata bind
-    mount none /system_ext/apex/com.android.permission /apex/com.android.permission bind
-    mount none /system_ext/apex/com.android.tethering /apex/com.android.tethering bind
-    mount none /system_ext/apex/com.android.resolv /apex/com.android.resolv bind
-    mount none /system_ext/apex/com.android.ipsec /apex/com.android.ipsec bind
-    mount none /system_ext/apex/com.android.vndk.v29 /apex/com.android.vndk.v29 bind
+    mount none /system_ext/apex/com.android.apex.cts.shim.v1_with_prebuilts /apex/com.android.apex.cts.shim.v1_with_prebuilts bind
+    mount none /system_ext/apex/com.android.art.debug /apex/com.android.art.debug bind
+    mount none /system_ext/apex/com.android.cellbroadcast /apex/com.android.cellbroadcast bind
     mount none /system_ext/apex/com.android.conscrypt /apex/com.android.conscrypt bind
+    mount none /system_ext/apex/com.android.extservices /apex/com.android.extservices bind
+    mount none /system_ext/apex/com.android.i18n /apex/com.android.i18n bind
+    mount none /system_ext/apex/com.android.ipsec /apex/com.android.ipsec bind
+    mount none /system_ext/apex/com.android.media /apex/com.android.media bind
+    mount none /system_ext/apex/com.android.media.swcodec /apex/com.android.media.swcodec bind
+    mount none /system_ext/apex/com.android.mediaprovider /apex/com.android.mediaprovider bind
+    mount none /system_ext/apex/com.android.neuralnetworks /apex/com.android.neuralnetworks bind
+    mount none /system_ext/apex/com.android.os.statsd /apex/com.android.os.statsd bind
+    mount none /system_ext/apex/com.android.permission /apex/com.android.permission bind
+    mount none /system_ext/apex/com.android.resolv /apex/com.android.resolv bind
+    mount none /system_ext/apex/com.android.runtime /apex/com.android.runtime bind
+    mount none /system_ext/apex/com.android.sdkext /apex/com.android.sdkext bind
+    mount none /system_ext/apex/com.android.tethering /apex/com.android.tethering bind
+    mount none /system_ext/apex/com.android.tzdata /apex/com.android.tzdata bind
+    mount none /system_ext/apex/com.android.vndk.current /apex/com.android.vndk.current bind
+    mount none /system_ext/apex/com.android.vndk.v27 /apex/com.android.vndk.v27 bind
+    mount none /system_ext/apex/com.android.vndk.v28 /apex/com.android.vndk.v28 bind
+    mount none /system_ext/apex/com.android.vndk.v29 /apex/com.android.vndk.v29 bind
     mount none /system_ext/apex/com.android.wifi /apex/com.android.wifi bind
 
     mkdir /apex/com.android.art 0777 root root

@@ -11,14 +11,16 @@ set -ex
 origin="$(readlink -f -- "$0")"
 origin="$(dirname "$origin")"
 
+[ ! -d vendor_vndk ] && git clone https://github.com/phhusson/vendor_vndk -b android-10.0
+
 targetArch=64
 [ "$1" == 32 ] && targetArch=32
 
 [ -z "$ANDROID_BUILD_TOP" ] && ANDROID_BUILD_TOP=/build2/AOSP-11.0/
 if [ "$targetArch" == 32 ];then
-    srcFile="$ANDROID_BUILD_TOP/out/target/product/phhgsi_arm_ab/system.img"
+    srcFile="$ANDROID_BUILD_TOP/out/target/product/tdgsi_arm_ab/system.img"
 else
-    srcFile="$ANDROID_BUILD_TOP/out/target/product/phhgsi_arm64_ab/system.img"
+    srcFile="$ANDROID_BUILD_TOP/out/target/product/tdgsi_arm64_ab/system.img"
 fi
 if [ -f "$2" ];then
     srcFile="$2"
@@ -46,11 +48,13 @@ find -maxdepth 1 -not -name system -not -name . -not -name .. -exec rm -Rf '{}' 
 mv system/* .
 rmdir system
 
-rm -Rf system_ext/apex/com.android.vndk.v29
 rm -Rf apex/*.apex
+rm -Rf apex/*.capex
 rm -Rf system_ext/apex/*.apex
+rm -Rf system_ext/apex/*.capex
 
 sed -i \
+    -e '/persist.bluetooth.factoryreset/d' \
     -e '/ro.radio.noril/d' \
     -e '/sys.usb.config/d' \
     -e '/ro.build.fingerprint/d' \
@@ -72,8 +76,10 @@ sed -i \
 
 xattr -w security.selinux u:object_r:property_contexts_file:s0 etc/selinux/plat_property_contexts
 
+if [ ! -f etc/init/apex-setup.rc ];then
 cp "$origin"/files/apex-setup.rc etc/init/
 xattr -w security.selinux u:object_r:system_file:s0 etc/init/apex-setup.rc
+fi
 
 cp "$origin"/tmp/init.environ.rc etc/init/init-environ.rc
 sed -i 's/on early-init/on init/g' etc/init/init-environ.rc
@@ -109,8 +115,13 @@ sed -i -E \
     etc/init/credstore.rc
 xattr -w security.selinux u:object_r:system_file:s0 etc/init/credstore.rc
 
+if [ -f system_ext/apex/com.android.media.swcodec/etc/init.rc ];then
 cp system_ext/apex/com.android.media.swcodec/etc/init.rc etc/init/media-swcodec.rc
 xattr -w security.selinux u:object_r:system_file:s0 etc/init/media-swcodec.rc
+else [ -f system_ext/apex/com.android.media.swcodec/etc/mediaswcodec.rc ];
+cp system_ext/apex/com.android.media.swcodec/etc/mediaswcodec.rc etc/init/media-swcodec.rc
+xattr -w security.selinux u:object_r:system_file:s0 etc/init/media-swcodec.rc
+fi
 
 cp system_ext/apex/com.android.adbd/etc/init.rc etc/init/adbd.rc
 xattr -w security.selinux u:object_r:system_file:s0 etc/init/adbd.rc
@@ -125,9 +136,15 @@ cp system_ext/apex/com.android.adbd/lib/libadb_protos.so lib/libadb_protos.so
 xattr -w security.selinux u:object_r:system_file:s0 lib/libadb_protos.so
 fi
 
+if [ -f etc/prop.default ];then
 sed -i s/ro.iorapd.enable=true/ro.iorapd.enable=false/g etc/prop.default
 xattr -w security.selinux u:object_r:system_file:s0 etc/prop.default
+fi
 
+sed -i s/ro.iorapd.enable=true/ro.iorapd.enable=false/g build.prop
+xattr -w security.selinux u:object_r:system_file:s0 build.prop
+
+rm -Rf system_ext/apex/com.android.vndk.v26
 cp -R system_ext/apex/com.android.vndk.v27 system_ext/apex/com.android.vndk.v26
 for i in vndkcore llndk vndkprivate vndksp;do
     mv system_ext/apex/com.android.vndk.v26/etc/${i}.libraries.27.txt system_ext/apex/com.android.vndk.v26/etc/${i}.libraries.26.txt
@@ -177,9 +194,15 @@ for vndk in 28 27 26;do
     done
 done
 
-sed -i 's/readproc//g' etc/init/llkd-debuggable.rc etc/init/llkd.rc
-xattr -w security.selinux u:object_r:sepolicy_file:s0 etc/init/llkd-debuggable.rc etc/init/llkd.rc
+if [ -f etc/init/llkd-debuggable.rc ];then
+sed -i 's/readproc//g' etc/init/llkd-debuggable.rc
+xattr -w security.selinux u:object_r:sepolicy_file:s0 etc/init/llkd-debuggable.rc
+fi
 
+if [ -f etc/init/llkd.rc ];then
+sed -i 's/readproc//g' etc/init/llkd.rc
+xattr -w security.selinux u:object_r:sepolicy_file:s0 etc/init/llkd.rc
+fi
 
 sed -i 's/v27/v26/g' system_ext/apex/com.android.vndk.v26/apex_manifest.pb
 xattr -w security.selinux u:object_r:system_file:s0 system_ext/apex/com.android.vndk.v26/apex_manifest.pb
@@ -198,14 +221,18 @@ xattr -w security.selinux u:object_r:system_file:s0 etc/init/bpfloader.rc etc/in
 sed -i -e s/readproc//g -e s/reserved_disk//g etc/init/hw/init.zygote64.rc etc/init/hw/init.zygote64_32.rc etc/init/hw/init.zygote32_64.rc etc/init/hw/init.zygote32.rc
 xattr -w security.selinux u:object_r:system_file:s0 etc/init/hw/init.zygote64.rc etc/init/hw/init.zygote64_32.rc etc/init/hw/init.zygote32_64.rc etc/init/hw/init.zygote32.rc
 
+rm -Rf lib/vndk-sp-26
 ln -s /apex/com.android.vndk.v26/lib/ lib/vndk-sp-26
 xattr -sw security.selinux u:object_r:system_lib_file:s0 lib/vndk-sp-26
+rm -Rf lib/vndk-26
 ln -s /apex/com.android.vndk.v26/lib/ lib/vndk-26
 xattr -sw security.selinux u:object_r:system_lib_file:s0 lib/vndk-26
 
 if [ -d lib64 ];then
+rm -Rf lib64/vndk-sp-26
 ln -s /apex/com.android.vndk.v26/lib64/ lib64/vndk-sp-26
 xattr -sw security.selinux u:object_r:system_lib_file:s0 lib64/vndk-sp-26
+rm -Rf lib64/vndk-26
 ln -s /apex/com.android.vndk.v26/lib64/ lib64/vndk-26
 xattr -sw security.selinux u:object_r:system_lib_file:s0 lib64/vndk-26
 fi
@@ -216,4 +243,8 @@ sleep 1
 umount d
 
 e2fsck -f -y s.img || true
+resize2fs -M s.img
+resize2fs -M s.img
+resize2fs -M s.img
+resize2fs -M s.img
 resize2fs -M s.img
