@@ -11,14 +11,16 @@ set -ex
 origin="$(readlink -f -- "$0")"
 origin="$(dirname "$origin")"
 
+[ ! -d vendor_vndk ] && git clone https://github.com/phhusson/vendor_vndk -b android-10.0
+
 targetArch=64
 [ "$1" == 32 ] && targetArch=32
 
 [ -z "$ANDROID_BUILD_TOP" ] && ANDROID_BUILD_TOP=/build2/AOSP-11.0/
 if [ "$targetArch" == 32 ];then
-    srcFile="$ANDROID_BUILD_TOP/out/target/product/phhgsi_arm_ab/system.img"
+    srcFile="$ANDROID_BUILD_TOP/out/target/product/tdgsi_arm_ab/system.img"
 else
-    srcFile="$ANDROID_BUILD_TOP/out/target/product/phhgsi_arm64_ab/system.img"
+    srcFile="$ANDROID_BUILD_TOP/out/target/product/tdgsi_arm64_ab/system.img"
 fi
 if [ -f "$2" ];then
     srcFile="$2"
@@ -46,7 +48,6 @@ find -maxdepth 1 -not -name system -not -name . -not -name .. -exec rm -Rf '{}' 
 mv system/* .
 rmdir system
 
-rm -Rf system_ext/apex/com.android.vndk.v29
 rm -Rf apex/*.apex
 rm -Rf system_ext/apex/*.apex
 
@@ -125,8 +126,13 @@ cp system_ext/apex/com.android.adbd/lib/libadb_protos.so lib/libadb_protos.so
 xattr -w security.selinux u:object_r:system_file:s0 lib/libadb_protos.so
 fi
 
+if [ -f etc/prop.default ];then
 sed -i s/ro.iorapd.enable=true/ro.iorapd.enable=false/g etc/prop.default
 xattr -w security.selinux u:object_r:system_file:s0 etc/prop.default
+fi
+
+sed -i s/ro.iorapd.enable=true/ro.iorapd.enable=false/g build.prop
+xattr -w security.selinux u:object_r:system_file:s0 build.prop
 
 cp -R system_ext/apex/com.android.vndk.v27 system_ext/apex/com.android.vndk.v26
 for i in vndkcore llndk vndkprivate vndksp;do
@@ -177,9 +183,15 @@ for vndk in 28 27 26;do
     done
 done
 
-sed -i 's/readproc//g' etc/init/llkd-debuggable.rc etc/init/llkd.rc
-xattr -w security.selinux u:object_r:sepolicy_file:s0 etc/init/llkd-debuggable.rc etc/init/llkd.rc
+if [ -f etc/init/llkd-debuggable.rc ];then
+sed -i 's/readproc//g' etc/init/llkd-debuggable.rc
+xattr -w security.selinux u:object_r:sepolicy_file:s0 etc/init/llkd-debuggable.rc
+fi
 
+if [ -f etc/init/llkd.rc ];then
+sed -i 's/readproc//g' etc/init/llkd.rc
+xattr -w security.selinux u:object_r:sepolicy_file:s0 etc/init/llkd.rc
+fi
 
 sed -i 's/v27/v26/g' system_ext/apex/com.android.vndk.v26/apex_manifest.pb
 xattr -w security.selinux u:object_r:system_file:s0 system_ext/apex/com.android.vndk.v26/apex_manifest.pb

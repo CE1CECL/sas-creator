@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #Usage:
-#bash lite-adapter.sh <32|64> [/path/to/system/image]
+#bash securize.sh <32|64> [/path/to/system/image]
 
 #cleanups
 umount d
